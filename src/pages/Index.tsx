@@ -1,0 +1,352 @@
+import { useState } from "react";
+import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
+import { UploadCard } from "@/components/upload/UploadCard";
+import { ProcessingOverlay } from "@/components/upload/ProcessingOverlay";
+import { ResultsModal } from "@/components/results/ResultsModal";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Download, Play, TrendingUp, Users, Shield } from "lucide-react";
+import { generateMockResults, generateSampleCSV } from "@/data/mockData";
+import { useToast } from "@/hooks/use-toast";
+import heroImage from "@/assets/hero-medical.jpg";
+
+interface ResultsData {
+  status: string;
+  jobId: string;
+  summary: {
+    num_patients: number;
+    high_risk_count: number;
+    median_risk: number;
+  };
+  results: Array<{
+    patient_id: string;
+    probability: number;
+    risk_level: "High" | "Medium" | "Low";
+    last_seen: string;
+    drivers: Array<{
+      feature: string;
+      contrib: number;
+    }>;
+  }>;
+  metrics: {
+    auroc: number;
+    auprc: number;
+    confusion_matrix: number[][];
+  };
+}
+
+const Index = () => {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [resultsData, setResultsData] = useState<ResultsData | null>(null);
+  const [showResults, setShowResults] = useState(false);
+  const [currentCondition, setCurrentCondition] = useState("");
+  const { toast } = useToast();
+
+  const handlePredictionStart = async (file: File, condition: string) => {
+    setCurrentCondition(condition);
+    setIsProcessing(true);
+
+    toast({
+      title: "Analysis started",
+      description: `Processing ${file.name} for ${condition} risk prediction...`,
+    });
+  };
+
+  // useEffect(() => {}, [resultsData]);
+
+  const handleProcessingComplete = () => {
+    // Generate mock results
+    const mockData = generateMockResults(currentCondition, 50);
+    // setResultsData(mockData);
+    setIsProcessing(false);
+    setShowResults(true);
+
+    toast({
+      title: "Analysis complete",
+      description: `Risk prediction completed for ${resultsData.summary.num_patients} patients.`,
+    });
+  };
+
+  const handleProcessingCancel = () => {
+    setIsProcessing(false);
+    toast({
+      title: "Analysis cancelled",
+      description: "Processing has been stopped.",
+    });
+  };
+
+  const downloadSampleCSV = () => {
+    const csvContent = generateSampleCSV();
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "sample-patient-data.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+
+    toast({
+      title: "Sample downloaded",
+      description: "Sample CSV file has been downloaded to your device.",
+    });
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+
+      {/* Hero Section */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src={heroImage}
+            alt="Medical AI dashboard visualization"
+            className="w-full h-full object-cover opacity-10"
+          />
+          <div className="absolute inset-0 hero-gradient opacity-90" />
+        </div>
+
+        <div className="relative container py-24 text-center">
+          <div className="max-w-4xl mx-auto space-y-8">
+            <div className="mb-4" />
+
+            <h1 className="text-5xl md:text-6xl font-bold text-primary-foreground">
+              Predict chronic-care deterioration within 90 days
+            </h1>
+
+            <p className="text-xl text-primary-foreground/90 max-w-2xl mx-auto leading-relaxed">
+              Upload patient data to get clinician-friendly risk insights
+              powered by advanced machine learning
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
+              <Button
+                size="lg"
+                className="text-lg px-8 py-6 glow-primary"
+                onClick={() => {
+                  const uploadSection =
+                    document.getElementById("upload-section");
+                  if (uploadSection) {
+                    uploadSection.scrollIntoView({ behavior: "smooth" });
+                    setTimeout(() => {
+                      uploadSection.classList.add("highlight-pulse");
+                      setTimeout(
+                        () => uploadSection.classList.remove("highlight-pulse"),
+                        2000
+                      );
+                    }, 500);
+                  }
+                }}
+              >
+                <Play className="w-5 h-5 mr-2" />
+                Start Risk Assessment
+              </Button>
+
+              <Button
+                variant="outline"
+                size="lg"
+                className="bg-white/10 border-white/20 text-primary-foreground hover:bg-white/20"
+                onClick={downloadSampleCSV}
+              >
+                <Download className="w-5 h-5 mr-2" />
+                Download Sample CSV
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content */}
+      <section className="container py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Upload Flow */}
+          <div className="lg:col-span-2">
+            <div id="upload-section" className="mb-8">
+              <h2 className="text-3xl font-bold mb-4">
+                Risk Prediction Workflow
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Upload your patient data and get AI-powered risk assessments in
+                minutes
+              </p>
+            </div>
+
+            <UploadCard
+              onPredictionStart={handlePredictionStart}
+              setResultsData={setResultsData}
+            />
+          </div>
+
+          {/* Sidebar Info */}
+          <div className="space-y-6">
+            {/* Quick Stats */}
+            <Card className="medical-card p-6">
+              <h3 className="font-semibold mb-4 flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-primary" />
+                Model Performance
+              </h3>
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">
+                    AUROC Score
+                  </span>
+                  <span className="font-medium">91.19%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">
+                    Sensitivity
+                  </span>
+                  <span className="font-medium">84.7%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">
+                    Specificity
+                  </span>
+                  <span className="font-medium">91.3%</span>
+                </div>
+              </div>
+            </Card>
+
+            {/* Required Data */}
+            <Card className="medical-card p-6">
+              <h3 className="font-semibold mb-4 flex items-center gap-2">
+                <Users className="w-5 h-5 text-accent" />
+                Data Requirements
+              </h3>
+              <div className="space-y-2 text-sm">
+                <p>
+                  <strong>Time window:</strong> 30-180 days per patient
+                </p>
+                <p>
+                  <strong>Min patients:</strong> 10+ for reliable results
+                </p>
+                <p>
+                  <strong>Required fields:</strong> Patient ID, dates, vitals,
+                  labs
+                </p>
+                <p>
+                  <strong>Format:</strong> CSV with headers
+                </p>
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full mt-4"
+                onClick={downloadSampleCSV}
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Get Sample Format
+              </Button>
+            </Card>
+
+            {/* Security Notice */}
+            <Card className="medical-card p-6">
+              <h3 className="font-semibold mb-4 flex items-center gap-2">
+                <Shield className="w-5 h-5 text-success" />
+                Privacy & Security
+              </h3>
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <p>✓ All data encrypted in transit (HTTPS)</p>
+                <p>✓ No PHI stored after analysis</p>
+                <p>✓ HIPAA-compliant processing</p>
+                <p>✓ De-identification maintained</p>
+              </div>
+            </Card>
+
+            {/* Quick Demo */}
+            <Card className="medical-card p-6 bg-primary/5 border-primary/20">
+              <h3 className="font-semibold mb-2">Try Demo Mode</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Experience the full workflow with sample data
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={() => {
+                  setCurrentCondition("diabetes");
+                  handleProcessingComplete();
+                }}
+              >
+                <Play className="w-4 h-4 mr-2" />
+                Launch Demo
+              </Button>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="bg-secondary/50 py-16">
+        <div className="container">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">
+              Comprehensive Risk Analysis
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Our AI engine provides detailed insights to support clinical
+              decision-making
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <Card className="medical-card p-6 text-center">
+              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <TrendingUp className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="font-semibold mb-2">Risk Stratification</h3>
+              <p className="text-sm text-muted-foreground">
+                Automated patient categorization into Low, Medium, and High risk
+                groups with confidence scores
+              </p>
+            </Card>
+
+            <Card className="medical-card p-6 text-center">
+              <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Users className="w-6 h-6 text-accent" />
+              </div>
+              <h3 className="font-semibold mb-2">Patient Prioritization</h3>
+              <p className="text-sm text-muted-foreground">
+                Identify patients requiring immediate attention with actionable
+                clinical recommendations
+              </p>
+            </Card>
+
+            <Card className="medical-card p-6 text-center">
+              <div className="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Shield className="w-6 h-6 text-success" />
+              </div>
+              <h3 className="font-semibold mb-2">Evidence-Based</h3>
+              <p className="text-sm text-muted-foreground">
+                Transparent model explanations with feature importance and
+                clinical reasoning
+              </p>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Processing Overlay */}
+      <ProcessingOverlay
+        isProcessing={isProcessing}
+        onComplete={handleProcessingComplete}
+        onCancel={handleProcessingCancel}
+      />
+
+      {/* Results Modal */}
+      <ResultsModal
+        isOpen={showResults}
+        onClose={() => setShowResults(false)}
+        data={resultsData}
+        condition={currentCondition}
+      />
+
+      <Footer />
+    </div>
+  );
+};
+
+export default Index;
