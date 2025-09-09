@@ -46,7 +46,7 @@ const Index = () => {
   const { toast } = useToast();
   useEffect(() => {
     if (resultsData) {
-      // console.log("Results jef data:", resultsData);
+      console.log("Results jef data:", resultsData);
       setIsProcessing(false);
       setShowResults(true);
     }
@@ -434,11 +434,15 @@ const Index = () => {
         condition={currentCondition}
       /> */}
       <ResultsModal
-        isOpen={!!resultsData}
-        onClose={() => setResultsData(null)}
+        isOpen={showResults}
+        onClose={() => {
+          setShowResults(false);
+          setResultsData(null);
+        }}
         data={resultsData}
         condition={currentCondition}
       />
+
       <Footer />
     </div>
   );
