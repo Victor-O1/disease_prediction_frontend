@@ -19,30 +19,30 @@ const About = () => {
   const teamMembers = [
     {
       name: "Mr. Priyesh Kumar Jha",
-      role: "ML Engineer",
+      role: "ML and Backend Engineer",
       description:
-        "Designed and implemented cutting-edge AI algorithms for personalized healthcare recommendations.",
+        "Designed and implemented cutting-edge AI algorithms for predictive analytics of chronic diseases. Moreover, developed a robust backend infrastructure to support the ML models.",
       image: "/avatars/doctor-1.jpg",
     },
     {
-      name: "Alex Rodriguez",
-      role: "Head of AI Engineering",
+      name: "Ayush Dwivedi",
+      role: "Frontend Designer",
       description:
-        "Former Google Health ML engineer. Specializes in healthcare-grade AI systems and model interpretability.",
+        "Designed the user interface and implemented responsive design to ensure optimal user experience.",
       image: "/avatars/engineer-1.jpg",
     },
     {
-      name: "Dr. Michael Park",
-      role: "Clinical Advisor",
+      name: "Anshuman",
+      role: "Data pipelining and Backend",
       description:
-        "Practicing internist and health informatics expert. Focused on clinical workflow integration.",
+        "Implemented data pipelines and aided in the development of the backend infrastructure.",
       image: "/avatars/doctor-2.jpg",
     },
     {
-      name: "Lisa Wang",
-      role: "Product Manager",
+      name: "Atharv Pandey",
+      role: "Backend and DB",
       description:
-        "Healthcare product veteran with 10+ years building clinician-facing tools and EHR integrations.",
+        "In charge of authentication, user management, and database management.",
       image: "/avatars/pm-1.jpg",
     },
   ];

@@ -138,9 +138,9 @@ export function Header() {
             </DropdownMenu>
           ) : (
             <div className="flex items-center gap-2">
-              <Button variant="ghost" onClick={handleLogin}>
+              {/* <Button variant="ghost" onClick={handleLogin}>
                 Login
-              </Button>
+              </Button> */}
               <Button onClick={handleLogin}>Sign Up</Button>
             </div>
           )}
