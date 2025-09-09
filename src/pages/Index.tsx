@@ -45,7 +45,7 @@ const Index = () => {
   const [currentCondition, setCurrentCondition] = useState("");
   const { toast } = useToast();
   useEffect(() => {
-    if (resultsData) {
+    if (resultsData?.results[0]?.probability) {
       console.log("Results jef data:", resultsData);
       setIsProcessing(false);
       setShowResults(true);
@@ -71,12 +71,20 @@ const Index = () => {
     );
 
     const rawData = await res.json();
-    console.log("Raw prediction result:", rawData);
+    console.log(
+      "Raw prediction result:",
+      rawData,
+      "condition:",
+      condition + "_90d_deterioration"
+    );
 
     // Transform backend response -> ResultsData shape
-    const transformedResults = rawData.map((entry, idx) => {
+    const transformedResults = await rawData.map((entry, idx) => {
       // Pick the probability for the chosen condition
-      const probability = entry[`${condition}_90d_deterioration`] ?? 0;
+      // console.log("Entry:", entry);
+      if (condition == "hypertension") condition = "heart_failure";
+      if (condition == "kidney") condition = "kidney_failure";
+      const probability = entry[`${condition}_90d_deterioration`];
 
       // Decide risk level
       let risk_level = "Low";
