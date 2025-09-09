@@ -11,6 +11,7 @@ import { Download, Play, TrendingUp, Users, Shield } from "lucide-react";
 import { generateMockResults, generateSampleCSV } from "@/data/mockData";
 import { useToast } from "@/hooks/use-toast";
 import heroImage from "@/assets/hero-medical.jpg";
+import { useEffect } from "react";
 
 interface ResultsData {
   status: string;
@@ -43,6 +44,13 @@ const Index = () => {
   const [showResults, setShowResults] = useState(false);
   const [currentCondition, setCurrentCondition] = useState("");
   const { toast } = useToast();
+  useEffect(() => {
+    if (resultsData) {
+      // console.log("Results jef data:", resultsData);
+      setIsProcessing(false);
+      setShowResults(true);
+    }
+  }, [resultsData]);
 
   const handlePredictionStart = async (file: File, condition: string) => {
     setCurrentCondition(condition);
@@ -87,6 +95,8 @@ const Index = () => {
       };
     });
 
+    console.log("Transformed prediction result:", transformedResults);
+
     // Update results state
     const data: ResultsData = {
       status: "completed",
@@ -102,25 +112,46 @@ const Index = () => {
           ] || 0,
       },
       results: transformedResults,
-      metrics: { auroc: 0.919, auprc: 0.877, confusion_matrix: [] }, // placeholder
+      metrics: {
+        auroc: 0.919,
+        auprc: 0.877,
+        confusion_matrix: [
+          [90, 4],
+          [1, 5],
+        ],
+      }, // placeholder
     };
+    console.log("data is ", data);
 
     setResultsData(data);
-    toast({
-      title: "Analysis started",
-      description: `Processing ${file.name} for ${condition} risk prediction...`,
-    });
+    console.log("resultsData is ", resultsData);
+
     console.log("API CALL RECEIVED");
+    // setIsProcessing(false);
+    // setShowResults(true);
+
+    toast({
+      title: "Analysis complete",
+      description: `Risk prediction completed for ${data.summary.num_patients} patients.`,
+    });
   };
 
   // useEffect(() => {}, [resultsData]);
 
   const handleProcessingComplete = () => {
+    // console.log("API CALL RECEIVED");
+    // setShowResults(true);
+    // setIsProcessing(false);
+
+    // toast({
+    //   title: "Analysis complete",
+    //   description: `Risk prediction completed for ${data.summary.num_patients} patients.`,
+    // });
     // Generate mock results
     // const mockData = generateMockResults(currentCondition, 50);
     // setResultsData(mockData);
-    setShowResults(true);
-    setIsProcessing(false);
+    // setShowResults(true);
+    // setIsProcessing(false);
 
     toast({
       title: "Analysis complete",
@@ -396,13 +427,18 @@ const Index = () => {
       />
 
       {/* Results Modal */}
-      <ResultsModal
+      {/* <ResultsModal
         isOpen={showResults}
         onClose={() => setShowResults(false)}
         data={resultsData}
         condition={currentCondition}
+      /> */}
+      <ResultsModal
+        isOpen={!!resultsData}
+        onClose={() => setResultsData(null)}
+        data={resultsData}
+        condition={currentCondition}
       />
-
       <Footer />
     </div>
   );
