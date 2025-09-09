@@ -13,6 +13,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { Upload, FileText, AlertCircle, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import Ibutton from "./ibutton";
 
 interface ResultsData {
   status: string;
@@ -245,9 +246,11 @@ export function UploadCard({
             <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-sm font-medium">
               A
             </div>
-            <h3 className="text-lg font-semibold">Upload CSV File</h3>
+            <div className="flex justify-between w-full items-center">
+              <h3 className="text-lg font-semibold">Upload CSV File</h3>
+              <Ibutton />
+            </div>
           </div>
-
           <div
             {...getRootProps()}
             className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
@@ -274,9 +277,7 @@ export function UploadCard({
                     ? "Drop the CSV file here"
                     : "Drag & drop CSV here, or browse"}
                 </p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Required: {REQUIRED_COLUMNS.join(", ")}
-                </p>
+                <p className="text-sm text-muted-foreground mt-1"></p>
               </div>
 
               {!uploadedFile && (
@@ -286,7 +287,6 @@ export function UploadCard({
               )}
             </div>
           </div>
-
           {isProcessing && (
             <div className="space-y-2">
               <Progress value={50} className="h-2" />
@@ -295,7 +295,6 @@ export function UploadCard({
               </p>
             </div>
           )}
-
           {validation && !validation.isValid && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
@@ -307,7 +306,6 @@ export function UploadCard({
               </AlertDescription>
             </Alert>
           )}
-
           {validation?.isValid && validation.preview && (
             <div className="space-y-2">
               <p className="text-sm font-medium text-success">
