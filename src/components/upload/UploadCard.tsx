@@ -231,65 +231,6 @@ export function UploadCard({
   const handleStartPrediction = async () => {
     if (!uploadedFile || !selectedCondition || !validation?.isValid) return;
 
-    console.log(selectedCondition, uploadedFile, validation);
-
-    // Create FormData and append under the key "file"
-    const formData = new FormData();
-    formData.append("file", uploadedFile);
-
-    const res = await fetch(
-      "https://health-deterioration-backend-4.onrender.com/predict",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-
-    const rawData = await res.json();
-    console.log("Raw prediction result:", rawData);
-
-    // Transform backend response -> ResultsData shape
-    const transformedResults = rawData.map((entry, idx) => {
-      // Pick the probability for the chosen condition
-      const probability = entry[`${selectedCondition}_90d_deterioration`] ?? 0;
-
-      // Decide risk level
-      let risk_level = "Low";
-      if (probability > 0.75) risk_level = "High";
-      else if (probability > 0.4) risk_level = "Medium";
-
-      return {
-        patient_id: `Patient_${idx + 1}`,
-        probability,
-        risk_level,
-        last_seen: new Date().toISOString(),
-        drivers: Object.entries(entry).map(([feature, contrib]) => ({
-          feature,
-          contrib,
-        })),
-      };
-    });
-
-    // Update results state
-    const data: ResultsData = {
-      status: "completed",
-      jobId: `job_${Date.now()}`,
-      summary: {
-        num_patients: transformedResults.length,
-        high_risk_count: transformedResults.filter(
-          (r) => r.risk_level === "High"
-        ).length,
-        median_risk:
-          transformedResults.map((r) => r.probability).sort((a, b) => a - b)[
-            Math.floor(transformedResults.length / 2)
-          ] || 0,
-      },
-      results: transformedResults,
-      metrics: { auroc: 0.919, auprc: 0.877, confusion_matrix: [] }, // placeholder
-    };
-
-    setResultsData(data);
-
     onPredictionStart(uploadedFile, selectedCondition);
   };
 
