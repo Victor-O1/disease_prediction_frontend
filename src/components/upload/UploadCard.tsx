@@ -275,8 +275,7 @@ export function UploadCard({
                     : "Drag & drop CSV here, or browse"}
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Required: patient_id, date, heart_rate, glucose,
-                  med_adherence_pct
+                  Required: {REQUIRED_COLUMNS.join(", ")}
                 </p>
               </div>
 

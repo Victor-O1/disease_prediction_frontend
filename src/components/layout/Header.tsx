@@ -26,7 +26,9 @@ export function Header() {
     });
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
       setIsLoggedIn(!!session);
       setUser(session?.user || null);
     });
@@ -38,10 +40,10 @@ export function Header() {
     if (isMockMode) {
       // Mock login for demo
       setIsLoggedIn(true);
-      setUser({ email: 'demo@example.com', id: 'demo-user' });
+      setUser({ email: "demo@example.com", id: "demo-user" });
       toast({
         title: "Logged in (Demo Mode)",
-        description: "Connect Supabase for real authentication"
+        description: "Connect Supabase for real authentication",
       });
       return;
     }
@@ -49,7 +51,7 @@ export function Header() {
     // In a real app, this would show a login modal
     toast({
       title: "Login",
-      description: "Login functionality requires Supabase setup"
+      description: "Login functionality requires Supabase setup",
     });
   };
 
@@ -59,28 +61,7 @@ export function Header() {
     setUser(null);
     toast({
       title: "Signed out",
-      description: "You have been logged out successfully"
-    });
-  };
-
-  const handleContactSales = () => {
-    const subject = encodeURIComponent("CarePredict AI - Sales Inquiry");
-    const body = encodeURIComponent(`Hi,
-
-I'm interested in learning more about CarePredict AI for my healthcare organization.
-
-Please contact me to discuss:
-- Pricing and licensing options
-- Implementation timeline
-- Training and support
-
-Best regards`);
-    
-    window.open(`mailto:sales@example.com?subject=${subject}&body=${body}`, '_blank');
-    
-    toast({
-      title: "Contact initiated",
-      description: "We'll get back to you within 24 hours"
+      description: "You have been logged out successfully",
     });
   };
 
@@ -97,39 +78,47 @@ Best regards`);
 
         {/* Navigation */}
         <nav className="hidden md:flex items-center gap-6">
-          <a href="/" className="text-sm font-medium hover:text-primary transition-colors">
+          <a
+            href="/"
+            className="text-sm font-medium hover:text-primary transition-colors"
+          >
             Home
           </a>
-          <a href="/about" className="text-sm font-medium hover:text-primary transition-colors">
+          <a
+            href="/about"
+            className="text-sm font-medium hover:text-primary transition-colors"
+          >
             About Us
           </a>
         </nav>
 
         {/* Right Section */}
         <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleContactSales}
-            className="hidden md:flex items-center gap-2"
-          >
-            <Mail className="w-4 h-4" />
-            Contact Sales
-          </Button>
-          
           <ThemeToggle />
-          
+
           {isLoggedIn ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                <Button
+                  variant="ghost"
+                  className="relative h-10 w-10 rounded-full"
+                >
                   <Avatar className="h-10 w-10">
-                    <AvatarImage src="/avatars/doctor.png" alt={user?.email || "User"} />
-                    <AvatarFallback>{user?.email?.[0]?.toUpperCase() || "U"}</AvatarFallback>
+                    <AvatarImage
+                      src="/avatars/doctor.png"
+                      alt={user?.email || "User"}
+                    />
+                    <AvatarFallback>
+                      {user?.email?.[0]?.toUpperCase() || "U"}
+                    </AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56 bg-popover" align="end" forceMount>
+              <DropdownMenuContent
+                className="w-56 bg-popover"
+                align="end"
+                forceMount
+              >
                 <DropdownMenuItem className="hover:bg-muted">
                   <User className="mr-2 h-4 w-4" />
                   <span>Profile</span>
@@ -138,7 +127,7 @@ Best regards`);
                   <Settings className="mr-2 h-4 w-4" />
                   <span>Settings</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   className="hover:bg-muted"
                   onClick={handleSignOut}
                 >
@@ -152,9 +141,7 @@ Best regards`);
               <Button variant="ghost" onClick={handleLogin}>
                 Login
               </Button>
-              <Button onClick={handleLogin}>
-                Sign Up
-              </Button>
+              <Button onClick={handleLogin}>Sign Up</Button>
             </div>
           )}
         </div>
