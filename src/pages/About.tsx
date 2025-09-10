@@ -18,7 +18,7 @@ import { toast } from "@/hooks/use-toast";
 const About = () => {
   const teamMembers = [
     {
-      name: "Mr. Priyesh Kumar Jha",
+      name: "Priyesh Kumar Jha",
       role: "ML and Backend Engineer",
       description:
         "Designed and implemented cutting-edge AI algorithms for predictive analytics of chronic diseases. Moreover, developed a robust backend infrastructure to support the ML models.",

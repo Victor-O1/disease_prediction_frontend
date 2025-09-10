@@ -121,8 +121,8 @@ const Index = () => {
       },
       results: transformedResults,
       metrics: {
-        auroc: 0.919,
-        auprc: 0.877,
+        auroc: 0.9545,
+        auprc: 0.9325,
         confusion_matrix: [
           [90, 4],
           [1, 5],
@@ -189,6 +189,58 @@ const Index = () => {
       title: "Sample downloaded",
       description: "Sample CSV file has been downloaded to your device.",
     });
+  };
+  const as: ResultsData = {
+    status: "completed",
+    jobId: "job_12345",
+    summary: {
+      num_patients: 3,
+      high_risk_count: 1,
+      median_risk: 0.42,
+    },
+    results: [
+      {
+        patient_id: "patient_001",
+        probability: 0.87,
+        risk_level: "High",
+        last_seen: "2025-09-09T10:30:00Z",
+        drivers: [
+          { feature: "blood_pressure", contrib: 0.32 },
+          { feature: "glucose_level", contrib: 0.28 },
+          { feature: "age", contrib: 0.15 },
+        ],
+      },
+      {
+        patient_id: "patient_002",
+        probability: 0.45,
+        risk_level: "Medium",
+        last_seen: "2025-09-08T18:10:00Z",
+        drivers: [
+          { feature: "bmi", contrib: 0.22 },
+          { feature: "cholesterol", contrib: 0.18 },
+          { feature: "exercise_level", contrib: -0.1 },
+        ],
+      },
+      {
+        patient_id: "patient_003",
+        probability: 0.18,
+        risk_level: "Low",
+        last_seen: "2025-09-07T14:50:00Z",
+        drivers: [
+          { feature: "age", contrib: 0.05 },
+          { feature: "smoking_status", contrib: 0.04 },
+          { feature: "blood_pressure", contrib: 0.03 },
+        ],
+      },
+    ],
+    metrics: {
+      auroc: 0.9545,
+      auprc: 0.9325,
+      confusion_matrix: [
+        [90, 4],
+        [1, 5],
+      ],
+    },
   };
 
   return (
@@ -290,19 +342,19 @@ const Index = () => {
                   <span className="text-sm text-muted-foreground">
                     AUROC Score
                   </span>
-                  <span className="font-medium">91.19%</span>
+                  <span className="font-medium">95.5%</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">
                     Sensitivity
                   </span>
-                  <span className="font-medium">84.7%</span>
+                  <span className="font-medium">83.3%</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">
                     Specificity
                   </span>
-                  <span className="font-medium">91.3%</span>
+                  <span className="font-medium">95.7%</span>
                 </div>
               </div>
             </Card>
@@ -365,6 +417,7 @@ const Index = () => {
                 size="sm"
                 className="w-full"
                 onClick={() => {
+                  setResultsData(as);
                   setCurrentCondition("diabetes");
                   handleProcessingComplete();
                 }}
