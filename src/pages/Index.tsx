@@ -175,19 +175,33 @@ const Index = () => {
     });
   };
 
-  const downloadSampleCSV = () => {
-    const csvContent = generateSampleCSV();
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
+  // const downloadSampleCSV = () => {
+  //   const csvContent = generateSampleCSV();
+  //   const blob = new Blob([csvContent], { type: "text/csv" });
+  //   const url = URL.createObjectURL(blob);
+  //   const link = document.createElement("a");
+  //   link.href = url;
+  //   link.download = "sample-patient-data.csv";
+  //   link.click();
+  //   URL.revokeObjectURL(url);
+
+  //   toast({
+  //     title: "Sample downloaded",
+  //     description: "Sample CSV file has been downloaded to your device.",
+  //   });
+  // };
+
+    const downloadSampleCSV = () => {
     const link = document.createElement("a");
-    link.href = url;
-    link.download = "sample-patient-data.csv";
+    link.href = "/sample-patient-data.csv"; // ✅ path to your CSV file
+    link.download = "sample-patient-data.csv"; // suggested download name
+    document.body.appendChild(link);
     link.click();
-    URL.revokeObjectURL(url);
+    document.body.removeChild(link);
 
     toast({
       title: "Sample downloaded",
-      description: "Sample CSV file has been downloaded to your device.",
+      description: "Sample CSV file has been downloaded from assets.",
     });
   };
   const as: ResultsData = {
